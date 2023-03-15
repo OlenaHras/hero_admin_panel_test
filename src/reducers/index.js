@@ -4,7 +4,6 @@ const initialState = {
   filters: [],
   activeElement: "all",
   filtersLoadingStatus: "idle",
-  filteredHeroes: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -18,12 +17,6 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         heroes: action.payload,
-        filteredHeroes:
-          state.activeElement === "all"
-            ? action.payload
-            : action.payload.filter(
-                (hero) => hero.element === state.activeElement
-              ),
         heroesLoadingStatus: "idle",
       };
     case "HEROES_FETCHING_ERROR":
@@ -32,28 +25,14 @@ const reducer = (state = initialState, action) => {
         heroesLoadingStatus: "error",
       };
     case "DELETE_HERO":
-      let newHeroList = state.heroes.filter((hero) => hero.id !== action.id);
       return {
         ...state,
-        heroes: newHeroList,
-        filteredHeroes:
-          state.activeElement === "all"
-            ? newHeroList
-            : newHeroList.filter(
-                (hero) => hero.element === state.activeElement
-              ),
+        heroes: state.heroes.filter((hero) => hero.id !== action.id),
       };
     case "ADD_HERO":
-      let createdHeroList = [...state.heroes, action.payload];
       return {
         ...state,
-        heroes: createdHeroList,
-        filteredHeroes:
-          state.activeElement === "all"
-            ? createdHeroList
-            : createdHeroList.filter(
-                (hero) => hero.element === state.activeElement
-              ),
+        heroes: [...state.heroes, action.payload],
       };
     case "FILTERS_FETCHING":
       return {
@@ -70,10 +49,6 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         activeElement: action.payload,
-        filteredHeroes:
-          action.payload === "all"
-            ? state.heroes
-            : state.heroes.filter((hero) => hero.element === action.payload),
       };
     default:
       return state;

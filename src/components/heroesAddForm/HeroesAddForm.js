@@ -17,7 +17,7 @@ import { addHero } from "../../actions";
 const HeroesAddForm = () => {
   const [hero, setHero] = useState({});
 
-  const { filters } = useSelector((state) => state);
+  const { filters } = useSelector((state) => state.filters);
   const dispatch = useDispatch();
   const { request } = useHttp();
 

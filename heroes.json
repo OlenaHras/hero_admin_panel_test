@@ -21,22 +21,27 @@
   ],
   "filters": [
     {
+      "id": "all",
       "name": "all",
       "className": "btn-outline-dark"
     },
     {
+      "id": "fire",
       "name": "fire",
       "className": "btn-danger"
     },
     {
+      "id": "water",
       "name": "water",
       "className": "btn-primary"
     },
     {
+      "id": "wind",
       "name": "wind",
       "className": "btn-success"
     },
     {
+      "id": "earth",
       "name": "earth",
       "className": "btn-secondary"
     }

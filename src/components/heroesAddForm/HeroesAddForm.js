@@ -2,7 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useHttp } from "../../hooks/http.hook";
-import { addHero } from "../../actions";
+import store from "../../store";
+import { selectAll } from "../heroesFilters/filtersSlice";
+import { addHero } from "../heroesList/heroesSlice";
+import Spinner from "../spinner/Spinner";
 
 // Задача для этого компонента:
 // Реализовать создание нового героя с введенными данными. Он должен попадать
@@ -17,7 +20,8 @@ import { addHero } from "../../actions";
 const HeroesAddForm = () => {
   const [hero, setHero] = useState({});
 
-  const { filters } = useSelector((state) => state.filters);
+  const { filtersLoadingStatus } = useSelector((state) => state.filters);
+  const filters = selectAll(store.getState());
   const dispatch = useDispatch();
   const { request } = useHttp();
 
@@ -42,6 +46,10 @@ const HeroesAddForm = () => {
     ).then(dispatch(addHero(newHero)));
     e.target.reset();
   };
+
+  if (filtersLoadingStatus === "loading") {
+    return <Spinner />;
+  }
 
   const options = filters.map(({ name }) => {
     if (name === "all") {

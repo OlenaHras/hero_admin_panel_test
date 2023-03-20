@@ -1,10 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useHttp } from "../../hooks/http.hook";
+
 import store from "../../store";
 import { selectAll } from "../heroesFilters/filtersSlice";
-import { addHero } from "../heroesList/heroesSlice";
+import { useCreateHeroMutation } from "../../api/apiSlice";
 import Spinner from "../spinner/Spinner";
 
 // Задача для этого компонента:
@@ -20,10 +19,9 @@ import Spinner from "../spinner/Spinner";
 const HeroesAddForm = () => {
   const [hero, setHero] = useState({});
 
-  const { filtersLoadingStatus } = useSelector((state) => state.filters);
+  const [createHero, { isLoading }] = useCreateHeroMutation();
+
   const filters = selectAll(store.getState());
-  const dispatch = useDispatch();
-  const { request } = useHttp();
 
   const handleInputChange = (e) => {
     setHero({
@@ -39,15 +37,10 @@ const HeroesAddForm = () => {
       id: uuidv4(),
     };
 
-    request(
-      "http://localhost:3001/heroes",
-      "POST",
-      JSON.stringify(newHero)
-    ).then(dispatch(addHero(newHero)));
-    e.target.reset();
+    createHero(newHero).unwrap();
   };
 
-  if (filtersLoadingStatus === "loading") {
+  if (isLoading) {
     return <Spinner />;
   }
 

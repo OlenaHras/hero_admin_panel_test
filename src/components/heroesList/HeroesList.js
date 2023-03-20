@@ -1,8 +1,7 @@
-import { useHttp } from "../../hooks/http.hook";
-import { useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { useGetHeroesQuery, useDeleteHeroMutation } from "../../api/apiSlice";
 
-import { deleteHero, fetchHeroes, filteredHeroesSelector } from "./heroesSlice";
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from "../spinner/Spinner";
 
@@ -12,31 +11,34 @@ import Spinner from "../spinner/Spinner";
 // Удаление идет и с json файла при помощи метода DELETE
 
 const HeroesList = () => {
-  const filteredHeroes = useSelector(filteredHeroesSelector);
-  const heroesLoadingStatus = useSelector(
-    (state) => state.heroes.heroesLoadingStatus
-  );
-  const dispatch = useDispatch();
-  const { request } = useHttp();
+  const { data: heroes = [], isLoading, isError } = useGetHeroesQuery();
 
-  useEffect(() => {
-    dispatch(fetchHeroes());
-    // eslint-disable-next-line
-  }, []);
+  const [deleteHero] = useDeleteHeroMutation();
+
+  const activeFilter = useSelector((state) => state.filters.activeElement);
+
+  const filteredHeroes = useMemo(() => {
+    const filteredHeroes = heroes.slice();
+
+    if (activeFilter === "all") {
+      return filteredHeroes;
+    } else {
+      return filteredHeroes.filter((hero) => hero.element === activeFilter);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [heroes, activeFilter]);
 
   const handleDeleteHero = useCallback(
     (id) => {
-      request(`http://localhost:3001/heroes/${id}`, "DELETE").then(
-        dispatch(deleteHero(id))
-      );
+      deleteHero(id);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [request]
+    []
   );
 
-  if (heroesLoadingStatus === "loading") {
+  if (isLoading) {
     return <Spinner />;
-  } else if (heroesLoadingStatus === "error") {
+  } else if (isError) {
     return <h5 className="text-center mt-5">Ошибка загрузки</h5>;
   }
 

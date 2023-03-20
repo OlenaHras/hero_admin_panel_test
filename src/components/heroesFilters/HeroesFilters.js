@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import store from "../../store";
-// import { useHttp } from "../../hooks/http.hook";
 import { filterElement, fetchFilters, selectAll } from "./filtersSlice";
 import Spinner from "../spinner/Spinner";
 // Задача для этого компонента:
@@ -17,7 +16,6 @@ const HeroesFilters = () => {
   );
   const filters = selectAll(store.getState());
   const dispatch = useDispatch();
-  // const { request } = useHttp();
 
   useEffect(() => {
     dispatch(fetchFilters());
